@@ -1,5 +1,5 @@
 const mongodbConnectionString =
-  "mongodb://root:root@localhost:27017/menjs?authSource=admin";
+  "mongodb+srv://root:root@cluster0.lcb0z.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const chalk = require("chalk");
 var connected = chalk.bold.green;
 var error = chalk.bold.yellow;
@@ -9,7 +9,6 @@ var termination = chalk.bold.magenta;
 const appRoot = require("app-root-path");
 const path = require("path");
 const fs = require("fs");
-const modelsPath = path.join(appRoot.path, "app", "models");
 
 module.exports = function (ctx) {
   const { Database } = ctx;
@@ -19,12 +18,11 @@ module.exports = function (ctx) {
 
 const loadModels = (ctx) => {
   let models = new Map();
-  fs.readdirSync(modelsPath).forEach(function (file) {
-    const filePath = path.join(appRoot.path, "app", "models", file);
+  const modelsList = ctx.Locations.get("models").all();
+  modelsList.forEach(function (filePath) {
     const Locations = ctx.Locations;
-    const modelName = file.toString().replace(".js", "");
+    const modelName = filePath.split("/").pop().toString().replace(".js", "");
     const schemaJson = require(Locations.get("mappings").get(modelName));
-
     const modelSchema = require(filePath)(
       ctx.Database.Schema,
       sanitizeModelData(schemaJson, ctx.Database)
