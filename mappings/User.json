@@ -1,0 +1,5 @@
+{
+  "name": "String",
+  "email": "String",
+  "todos": { "todo": { "type": "ID", "ref": "Todo" }, "seen": "Boolean" }
+}
