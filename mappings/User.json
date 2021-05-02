@@ -1,5 +1,6 @@
 {
   "name": "String",
   "email": "String",
-  "todos": { "todo": { "type": "ID", "ref": "Todo" }, "seen": "Boolean" }
+  "todos": { "todo": { "type": "ID", "ref": "Todo" }, "seen": "Boolean" },
+  "password": "String"
 }

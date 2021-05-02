@@ -18,7 +18,8 @@ const loadModels = (ctx) => {
   modelsList.forEach(function (filePath) {
     const Locations = ctx.Locations;
     const modelName = filePath.split("/").pop().toString().replace(".js", "");
-    const schemaJson = require(Locations.get("mappings").get(modelName));
+    const json = require(Locations.get("mappings").get(modelName));
+    const schemaJson = Object.assign({}, JSON.parse(JSON.stringify(json)));
     const modelSchema = require(filePath)(
       ctx.Database.Schema,
       sanitizeModelData(schemaJson, ctx.Database)
@@ -29,14 +30,15 @@ const loadModels = (ctx) => {
 };
 
 const sanitizeModelData = (json, Database) => {
-  Object.keys(json).forEach((key) => {
-    if (typeof json[key] === "object") {
-      if (json[key].hasOwnProperty("ref")) {
-        json[key].type = Database.Schema.Types.ObjectId;
-      } else json[key] = sanitizeModelData(json[key], Database);
+  const returnJson = { ...json };
+  Object.keys(returnJson).forEach((key) => {
+    if (typeof returnJson[key] === "object") {
+      if (returnJson[key].hasOwnProperty("ref")) {
+        returnJson[key].type = Database.Schema.Types.ObjectId;
+      } else returnJson[key] = sanitizeModelData(returnJson[key], Database);
     }
   });
-  return json;
+  return returnJson;
 };
 
 const connectDatabase = (Database) => {
