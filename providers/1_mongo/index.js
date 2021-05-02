@@ -6,10 +6,6 @@ var error = chalk.bold.yellow;
 var disconnected = chalk.bold.red;
 var termination = chalk.bold.magenta;
 
-const appRoot = require("app-root-path");
-const path = require("path");
-const fs = require("fs");
-
 module.exports = function (ctx) {
   const { Database } = ctx;
   connectDatabase(Database);
