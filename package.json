@@ -7,6 +7,9 @@
     "expressjs",
     "mongodb"
   ],
+  "scripts": {
+    "build": "cd client && npm run build"
+  },
   "author": "Rahul Tanwar <mr.rahultanwar@gmail.com>",
   "license": "ISC",
   "dependencies": {

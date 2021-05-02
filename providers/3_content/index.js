@@ -6,8 +6,6 @@ module.exports = function (ctx) {
   const Server = ctx.Server;
   const Locations = ctx.Locations;
 
-  //   Server.post('/content/')
-
   Server.get("/content/:model", (req, res) => {
     const { model } = req.params;
     const schemaJson = require(Locations.get("mappings").get(model));
