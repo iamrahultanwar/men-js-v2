@@ -11,7 +11,16 @@ module.exports = function (ctx) {
         Server.get("/" + controllerName, controllerImport[key]);
       }
       if (key === "create") {
-        Server.post("/" + controllerName + "/create", controllerImport[key]);
+        Server.post("/" + controllerName, controllerImport[key]);
+      }
+      if (key === "show") {
+        Server.get("/" + controllerName + "/:id", controllerImport[key]);
+      }
+      if (key === "update") {
+        Server.put("/" + controllerName + "/:id", controllerImport[key]);
+      }
+      if (key == "delete") {
+        Server.delete("/" + controllerName + "/:id", controllerImport[key]);
       }
     });
   });

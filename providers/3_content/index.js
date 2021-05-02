@@ -1,4 +1,6 @@
 const fs = require("fs");
+const template = require("./mustache");
+var Mustache = require("mustache");
 
 module.exports = function (ctx) {
   const Server = ctx.Server;
@@ -20,7 +22,19 @@ module.exports = function (ctx) {
       Locations.get("mappings").update(model, schema);
       return res.send({ message: "Found" });
     } else {
+      let controllerTemplate = template("controller");
+      let modelTemplate = template("model");
+      controllerTemplate = Mustache.render(controllerTemplate, {
+        model: model,
+        variable: model.toString().toLowerCase(),
+      });
+      modelTemplate = Mustache.render(modelTemplate, {});
+      Locations.get("controllers").create(
+        model.toString().toLowerCase(),
+        controllerTemplate
+      );
       Locations.get("mappings").create(model, schema);
+      Locations.get("models").create(model, modelTemplate);
       return res.send({ message: "Not Found" });
     }
   });

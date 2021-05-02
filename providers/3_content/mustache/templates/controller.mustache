@@ -1,0 +1,55 @@
+module.exports = (ctx) => {
+  const {{model}} = ctx.Models.get("{{model}}");
+
+  const index = async (req, res) => {
+    try {
+      const {{variable}}s = await {{model}}.find({}).lean();
+      return res.send({ status: true, {{variable}}s });
+    } catch (error) {
+      console.log(error);
+      return res.send({ status: false, error });
+    }
+  };
+
+  const create = async (req, res) => {
+    const data = req.body;
+    try {
+      const {{variable}} = await {{model}}.create(data);
+      return res.send({{variable}});
+    } catch (error) {
+      return res.send(error);
+    }
+  };
+
+  const show = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const {{variable}} = await {{model}}.findById(id);
+      return res.send({{variable}});
+    } catch (error) {
+      return res.send(error);
+    }
+  };
+
+  const update = async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+    try {
+      const {{variable}} = await {{model}}.findByIdAndUpdate(id, data);
+      return res.send({{variable}});
+    } catch (error) {
+      return res.send(error);
+    }
+  };
+
+  const destroy = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const {{variable}} = await {{model}}.findByIdAndDelete(id);
+      return res.send({{variable}});
+    } catch (error) {
+      return res.send(error);
+    }
+  };
+  return { index, create, show, update, destroy };
+};
