@@ -1,47 +1,24 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import * as pages from "./pages";
 
+// const links = Object.keys(pages).map((key) => (
+//   <li>
+//     <Link to={pages[key].route}>{pages[key].name}</Link>
+//   </li>
+// ));
+
+const pagesRoute = Object.keys(pages).map((key) => {
+  return (
+    <Route exact path={pages[key].route}>
+      {pages[key]}
+    </Route>
+  );
+});
 export default function App() {
   return (
-    <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/admin/">Home</Link>
-            </li>
-            <li>
-              <Link to="/admin/about">About</Link>
-            </li>
-            <li>
-              <Link to="/admin/users">Users</Link>
-            </li>
-          </ul>
-        </nav>
-        <Switch>
-          <Route path="/admin/about">
-            <About />
-          </Route>
-          <Route path="/admin/users">
-            <Users />
-          </Route>
-          <Route path="/admin">
-            <Home />
-          </Route>
-        </Switch>
-      </div>
+    <Router basename="/admin">
+      <Switch>{pagesRoute}</Switch>
     </Router>
   );
-}
-
-function Home() {
-  return <h2>Home</h2>;
-}
-
-function About() {
-  return <h2>About</h2>;
-}
-
-function Users() {
-  return <h2>Users</h2>;
 }

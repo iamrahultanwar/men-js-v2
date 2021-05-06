@@ -8,6 +8,7 @@
     "mongodb"
   ],
   "scripts": {
+    "dev": "npm run build && nodemon server",
     "build": "cd client && npm run build"
   },
   "author": "Rahul Tanwar <mr.rahultanwar@gmail.com>",
