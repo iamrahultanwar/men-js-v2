@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "dev": "npm run build && nodemon server",
-    "build": "cd client && npm run build"
+    "build": "cd client && npm run build",
+    "client-dev": "cd client && npm start"
   },
   "author": "Rahul Tanwar <mr.rahultanwar@gmail.com>",
   "license": "ISC",
