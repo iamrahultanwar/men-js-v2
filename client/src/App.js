@@ -1,24 +1,29 @@
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import * as pages from "./pages";
+import React from 'react';
+import {
+  ChakraProvider,
+  Box,
+  Grid,
+  theme,
+} from '@chakra-ui/react';
+import Navbar from './components/common/Navbar/Navbar';
+import { Switch, Route } from 'react-router-dom';
+import appRoutes from './routes/routes';
 
-// const links = Object.keys(pages).map((key) => (
-//   <li>
-//     <Link to={pages[key].route}>{pages[key].name}</Link>
-//   </li>
-// ));
 
-const pagesRoute = Object.keys(pages).map((key) => {
+function App() {
   return (
-    <Route exact path={pages[key].route}>
-      {pages[key]}
-    </Route>
-  );
-});
-export default function App() {
-  return (
-    <Router basename="/admin">
-      <Switch>{pagesRoute}</Switch>
-    </Router>
+    <ChakraProvider theme={theme}>
+      <Box textAlign="center" >
+        <Navbar />
+        <Grid minH="100vh" p={3}>
+          <Switch >
+            {appRoutes.map((route, idx) => <Route component={route.component} exact={route.path} key={`${route.key}_${idx}`} />)}
+          </Switch>
+
+        </Grid>
+      </Box>
+    </ChakraProvider>
   );
 }
+
+export default App;
