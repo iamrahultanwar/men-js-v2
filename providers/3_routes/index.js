@@ -19,8 +19,12 @@ module.exports = function (ctx) {
       if (key === "update") {
         Server.put("/" + controllerName + "/:id", controllerImport[key]);
       }
-      if (key == "delete") {
+      if (key === "delete") {
         Server.delete("/" + controllerName + "/:id", controllerImport[key]);
+      }
+
+      if (key === "query") {
+        Server.post("/" + controllerName + "/query", controllerImport[key]);
       }
     });
   });

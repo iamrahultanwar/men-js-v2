@@ -1,4 +1,3 @@
-const fs = require("fs");
 const template = require("./mustache");
 var Mustache = require("mustache");
 

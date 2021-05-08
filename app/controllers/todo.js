@@ -1,5 +1,7 @@
 module.exports = (ctx) => {
   const Todo = ctx.Models.get("Todo");
+  const Auth = ctx.Auth;
+  console.log(Auth);
 
   const index = async (req, res) => {
     try {
@@ -51,5 +53,21 @@ module.exports = (ctx) => {
       return res.send(error);
     }
   };
-  return { index, create, show, update, destroy };
+
+  const query = async (req, res) => {
+    const query = req.body;
+
+    try {
+      const todos = await Todo.find()
+        .field(query)
+        .keyword(query)
+        .filter(query)
+        .order(query)
+        .page(query);
+      return res.send(todos);
+    } catch (error) {
+      return res.send(error);
+    }
+  };
+  return { index, create, show, update, destroy, query };
 };

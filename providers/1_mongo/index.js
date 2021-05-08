@@ -21,7 +21,9 @@ const loadModels = (ctx) => {
     const json = require(Locations.get("mappings").get(modelName));
     const schemaJson = Object.assign({}, JSON.parse(JSON.stringify(json)));
     const modelSchema = require(filePath)(
-      new ctx.Database.Schema(sanitizeModelData(schemaJson, ctx.Database))
+      new ctx.Database.Schema(sanitizeModelData(schemaJson, ctx.Database), {
+        timestamps: true,
+      })
     );
     models.set(modelName, new ctx.Database.model(modelName, modelSchema));
   });
