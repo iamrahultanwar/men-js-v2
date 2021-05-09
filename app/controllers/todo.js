@@ -1,7 +1,5 @@
 module.exports = (ctx) => {
   const Todo = ctx.Models.get("Todo");
-  const Auth = ctx.Auth;
-  console.log(Auth);
 
   const index = async (req, res) => {
     try {

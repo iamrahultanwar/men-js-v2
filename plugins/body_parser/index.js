@@ -1,9 +1,6 @@
-var bodyParser = require("body-parser");
-
+const express = require("express");
 module.exports = function (ctx) {
-  // parse application/x-www-form-urlencoded
-  ctx.Server.use(bodyParser.urlencoded({ extended: false }));
-
-  // parse application/json
-  ctx.Server.use(bodyParser.json());
+  const { Middleware } = ctx;
+  Middleware.global.set(express.json());
+  Middleware.global.set(express.urlencoded({ extended: true }));
 };

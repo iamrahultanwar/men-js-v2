@@ -2,7 +2,7 @@ const accessTokenSecret = "youraccesstokensecret";
 const jwt = require("jsonwebtoken");
 
 module.exports = (ctx) => {
-  const { Server, Database, Models } = ctx;
+  const { Server, Database, Models, Middleware } = ctx;
   const { Schema, model } = Database;
 
   const authSchema = new Schema(
@@ -46,8 +46,6 @@ module.exports = (ctx) => {
 
   Auth.loginUsingMobile = async (req, res) => {};
 
-  Server.post("/auth/login", Auth.loginUsingEmailPassword);
-
   Server.use(function (req, res, next) {
     const authHeader = req.headers.authorization;
 
@@ -70,12 +68,7 @@ module.exports = (ctx) => {
     }
   });
 
-  Auth.privateRoute = (req, res, next) => {
-    if (req.auth.isLoggedIn) {
-      next();
-    }
-    return res.send("Access Not Allowed").status(401);
-  };
+  Server.post("/auth/login", Auth.loginUsingEmailPassword);
 
   ctx.service("Auth", (c) => Auth);
 };
