@@ -2,8 +2,8 @@ const express = require("express");
 const path = require("path");
 
 module.exports = (ctx) => {
-  const Locations = ctx.Locations;
-  const Server = ctx.Server;
+  const Locations = ctx.container.Locations;
+  const Server = ctx.container.Server;
 
   const rootDir = Locations.get("helper").rootPath;
   Server.use(express.static(path.join(rootDir, "public")));

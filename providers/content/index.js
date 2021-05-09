@@ -2,8 +2,8 @@ const template = require("./mustache");
 var Mustache = require("mustache");
 
 module.exports = function (ctx) {
-  const Server = ctx.Server;
-  const Locations = ctx.Locations;
+  const Server = ctx.container.Server;
+  const Locations = ctx.container.Locations;
 
   Server.get("/content/list", (req, res) => {
     const modelList = Locations.get("mappings").all();
