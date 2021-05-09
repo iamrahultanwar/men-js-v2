@@ -5,6 +5,14 @@ module.exports = function (ctx) {
   const Server = ctx.Server;
   const Locations = ctx.Locations;
 
+  Server.get("/content/list", (req, res) => {
+    const modelList = Locations.get("mappings").all();
+    const models = modelList.map((list) =>
+      list.split("/").pop().replace(".json", "")
+    );
+    return res.send(models);
+  });
+
   Server.get("/content/:model", (req, res) => {
     const { model } = req.params;
     const schemaJson = require(Locations.get("mappings").get(model));

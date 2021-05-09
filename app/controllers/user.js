@@ -51,5 +51,21 @@ module.exports = (ctx) => {
       return res.send(error);
     }
   };
-  return { index, create, show, update, destroy };
+
+   const query = async (req, res) => {
+    const query = req.body;
+    try {
+      const user = await User.find()
+        .field(query)
+        .keyword(query)
+        .filter(query)
+        .order(query)
+        .page(query);
+      return res.send(user);
+    } catch (error) {
+      return res.send(error);
+    }
+  };
+
+  return { index, create, show, update, destroy, query };
 };
