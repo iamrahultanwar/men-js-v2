@@ -1,8 +1,19 @@
 import React from 'react';
-import { Flex, Image, useColorModeValue } from '@chakra-ui/react';
+import {
+  Flex,
+  Image,
+  useColorModeValue,
+  Box,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+} from '@chakra-ui/react';
 import { ColorModeSwitcher } from '../../../ColorModeSwitcher';
 import DarkLogo from '../../../assets/dark_logo.svg';
 import LightLogo from '../../../assets/light_logo.svg';
+import { MdArrowDropDown } from 'react-icons/md';
 
 const Navbar = props => {
   return (
@@ -40,7 +51,17 @@ const Navbar = props => {
           <MenuItems onClick={() => props.setPage('people')}>People</MenuItems>
         </Box> */
         }
-        <ColorModeSwitcher justifySelf="flex-end" />
+        <Box justifySelf="flex-end">
+          <Menu>
+            <MenuButton as={Button} rightIcon={<MdArrowDropDown />}>
+              admin.menjs.com
+            </MenuButton>
+            <MenuList>
+              <MenuItem>Logout</MenuItem>
+            </MenuList>
+          </Menu>
+          <ColorModeSwitcher />
+        </Box>
       </Flex>
     </>
   );

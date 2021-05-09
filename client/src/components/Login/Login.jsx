@@ -9,14 +9,14 @@ import {
   Box,
   Container,
   Flex,
-  Image,
+  useToast,
   Heading,
 } from '@chakra-ui/react';
 import * as Yup from 'yup';
-import LightLogo from '../../assets/light_logo.svg';
-import DarkLogo from '../../assets/dark_logo.svg';
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
+  const history = useHistory();
   const SignupSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string()
@@ -24,11 +24,13 @@ const Login = () => {
       .max(50, 'Too Long!')
       .required('Required'),
   });
+
+  const toast = useToast();
   return (
     <React.Fragment>
       <Container>
         <Flex
-          minHeight="100%"
+          minHeight="80vh"
           width="full"
           alignItems="center"
           justifyContent="center"
@@ -50,10 +52,21 @@ const Login = () => {
               <Formik
                 initialValues={{ email: '', password: '' }}
                 onSubmit={(values, actions) => {
-                  setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
+                  if (
+                    values.email === 'admin@menjs.com' &&
+                    values.password === 'admin1708'
+                  )
+                    setTimeout(() => {
+                      history.replace('/dashboard');
+                    }, 1000);
+                  else {
+                    toast({
+                      title: `Invalid credentials!`,
+                      status: 'error',
+                      isClosable: true,
+                    });
                     actions.setSubmitting(false);
-                  }, 1000);
+                  }
                 }}
                 validationSchema={SignupSchema}
               >
