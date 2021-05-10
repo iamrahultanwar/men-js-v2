@@ -1,5 +1,5 @@
 module.exports = (ctx) => {
-  const Todo = ctx.Models.get("Todo");
+  const Todo = ctx.container.Models.get("Todo");
 
   const index = async (req, res) => {
     try {

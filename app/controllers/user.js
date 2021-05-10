@@ -1,5 +1,5 @@
 module.exports = (ctx) => {
-  const User = ctx.Models.get("User");
+  const User = ctx.container.Models.get("User");
 
   const index = async (req, res) => {
     try {
@@ -52,7 +52,7 @@ module.exports = (ctx) => {
     }
   };
 
-   const query = async (req, res) => {
+  const query = async (req, res) => {
     const query = req.body;
     try {
       const user = await User.find()
