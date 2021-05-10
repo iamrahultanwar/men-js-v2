@@ -7,7 +7,7 @@ var disconnected = chalk.bold.red;
 var termination = chalk.bold.magenta;
 
 module.exports = function (ctx) {
-  const { Database } = ctx;
+  const { Database } = ctx.container;
   connectDatabase(Database);
 };
 
