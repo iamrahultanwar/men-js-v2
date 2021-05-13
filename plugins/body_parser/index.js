@@ -1,6 +1,6 @@
 const express = require("express");
 module.exports = function (ctx) {
-  const { Middleware } = ctx.container;
-  Middleware.global().set(express.json());
-  Middleware.global().set(express.urlencoded({ extended: true }));
+  const { Server } = ctx.container;
+  Server.use(express.json());
+  Server.use(express.urlencoded({ extended: true }));
 };

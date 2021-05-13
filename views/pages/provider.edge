@@ -1,0 +1,12 @@
+@layout('index')
+
+@section('body')
+    @!component('components/page-header', {
+        heading:"Provider",
+        subHeading: provider
+    })
+    <hr/>   
+    @include(view)
+
+@end
+     
