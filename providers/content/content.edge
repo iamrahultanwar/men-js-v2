@@ -1,25 +1,72 @@
-<div class="row" id="app">
-    <div class="col-md-4">
-        <!-- Heading -->
-        <div class="text-uppercase" style="padding:0 1rem;font-weight:800;font-size: .8rem">
-            Collection 
+<div id="app">
+    {{--  Collections List  --}}
+    <div class="row">
+        <div class="col-md-4 col-lg-4">
+            <!-- Heading -->
+            <div class="text-uppercase mb-4 d-flex justify-content-between" style="padding:0 1rem;font-weight:800;font-size: .8rem">
+                <span>Collections</span>   
+                <button class="btn btn-outline-primary">Create</button>
+            </div>
+
+            {{--  List  --}}
+            <div class="d-flex" >
+                <div style="cursor:pointer"  class="card border-left-primary shadow h-20 mx-3" v-for="collection in collectionList" @click="getModelSchema(collection)">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="h5 mb-0 font-weight-bold text-gray-800 text-uppercase">@{{collection}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul>
-            <li v-for="collection in collectionList" class="mt-2 text-gray-900" @click="getModelSchema(collection)" >
-                @{{collection}}
-            </li>
-        </ul>
+         {{--  Selected Schema  --}}
+        <div class="col-lg-8">
+            <div class="text-uppercase mb-4" style="padding:0 1rem;font-weight:800;font-size: .8rem">
+                Schema 
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary d-flex justify-content-between">@{{selectedCollection.name}}  <span class="text-muted" >@{{Object.keys(selectedCollection).length}} fields </span> </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row"  v-for="(value,name) in selectedCollection.schema" >
+                          <div class="col-4 text-left">  
+                            @{{name}}    
+                          </div> 
+                          <div class="col-4 text-center">
+                              @{{value.type}}
+                          </div>
+                          <div class="col-4 text-right">
+                            <i class="fas fa-pencil-alt"></i>
+                            <i class="fas fa-trash-alt"></i>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-6">
-       
-    </div>
+
+    <hr/>
+
+     
 </div>
 
 <script type="text/javascript">
-   const vue =  new Vue({
+   const App =  new Vue({
         el:'#app',
         data:{
-            collectionList:[]
+            collectionList:[],
+            selectedCollection:{
+                name:"",
+                schema:{}
+            },
+            editMode:false,
+            schemaOptions:{
+                name:    "String",
+            }
         },
         created: function () {
            this.getCollectionList()
@@ -33,6 +80,7 @@
                 .then(response => response.json())
                 .then(result => {
                     this.collectionList = result
+                    this.getModelSchema(result[0])
                 })
                 .catch(error => console.log('error', error));
             },
@@ -41,10 +89,14 @@
                 var requestOptions = {
                     method: 'GET',
                 };
-
                 fetch("http://localhost:1708/content/"+model, requestOptions)
                 .then(response => response.json())
-                .then(result => console.log(result))
+                .then(result => {
+                    this.selectedCollection = {
+                        name:model,
+                        schema:result
+                    }
+                })
                 .catch(error => console.log('error', error));
             }
         }
