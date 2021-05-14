@@ -5,7 +5,6 @@
             <!-- Heading -->
             <div class="text-uppercase mb-4 d-flex justify-content-between" style="padding:0 1rem;font-weight:800;font-size: .8rem">
                 <span>Collections</span>   
-                <button class="btn btn-outline-primary">Create</button>
             </div>
 
             {{--  List  --}}
@@ -16,6 +15,18 @@
                             <div class="col mr-2">
                                 <div class="h5 mb-0 font-weight-bold text-gray-800 text-uppercase">@{{collection}}</div>
                             </div>
+                        </div>
+                    </div>
+                </div>              
+            </div>
+
+            <br/>
+
+            <div style="cursor:pointer"  class="card border-left-success shadow h-20 mx-3 w-50" v-for="collection in collectionList" @click="getModelSchema(collection)">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-capitalize text-center">+ create</div>
                         </div>
                     </div>
                 </div>
@@ -32,8 +43,10 @@
                     <h6 class="m-0 font-weight-bold text-primary d-flex justify-content-between">@{{selectedCollection.name}}  <span class="text-muted" >@{{Object.keys(selectedCollection).length}} fields </span> </h6>
                 </div>
                 <div class="card-body">
-                    <div class="row"  v-for="(value,name) in selectedCollection.schema" >
+                    <div class="row my-4"  v-for="(value,name) in selectedCollection.schema" >
                           <div class="col-4 text-left">  
+                           <schema-type :type="value.type"></schema-type>
+                            <span class="mx-2"></span> 
                             @{{name}}    
                           </div> 
                           <div class="col-4 text-center">
@@ -41,8 +54,14 @@
                           </div>
                           <div class="col-4 text-right">
                             <i class="fas fa-pencil-alt"></i>
+                            <span class="mx-2" ></span>
                             <i class="fas fa-trash-alt"></i>
                           </div>
+                    </div>
+                    <div class="row mt-2 float-right">
+                          <button class="btn btn-outline-primary font-weight-bold text-uppercase">
+                              + add another field to this collection type
+                          </button>
                     </div>
                 </div>
             </div>
@@ -55,6 +74,30 @@
 </div>
 
 <script type="text/javascript">
+   Vue.component("schema-type",{
+       props:["type"],
+       computed:{
+            typeClass(){
+                const type = this.type.toLowerCase();         
+                switch(type){
+                    case "string": return "badge-success";
+                    case "number": return "badge-primary";
+                    case "boolean": return "badge-warning";
+                    default: return "badge-secondary"
+                }
+            },
+            typeText(){
+                const type = this.type.toLowerCase();         
+                switch(type){
+                    case "string": return "Abc";
+                    case "number": return "123";
+                    case "boolean": return "true";
+                    default: return "na"
+                }
+            }
+        },
+       template:"<span :class=\"['badge', typeClass,'p-2','px-3']\" >@{{typeText}}</span>"
+   }) 
    const App =  new Vue({
         el:'#app',
         data:{
@@ -64,13 +107,11 @@
                 schema:{}
             },
             editMode:false,
-            schemaOptions:{
-                name:    "String",
-            }
         },
         created: function () {
            this.getCollectionList()
         },
+        
         methods : {
             async getCollectionList(){
                 var requestOptions = {
