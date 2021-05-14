@@ -1,36 +1,34 @@
 <div id="app">
     {{--  Collections List  --}}
     <div class="row">
-        <div class="col-md-4 col-lg-4">
-            <!-- Heading -->
-            <div class="text-uppercase mb-4 d-flex justify-content-between" style="padding:0 1rem;font-weight:800;font-size: .8rem">
-                <span>Collections</span>   
-            </div>
+        <div class="col-md-4 col-lg-4 d-flex flex-column justify-content-between">
+           
 
-            {{--  List  --}}
-            <div class="d-flex" >
-                <div style="cursor:pointer"  class="card border-left-primary shadow h-20 mx-3" v-for="collection in collectionList" @click="getModelSchema(collection)">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="h5 mb-0 font-weight-bold text-gray-800 text-uppercase">@{{collection}}</div>
+            <div>
+                 <!-- Heading -->
+                <div class="text-uppercase mb-4 d-flex justify-content-between" style="padding:0 1rem;font-weight:800;font-size: .8rem">
+                    <span>Collections</span>   
+                </div>
+                 {{--  List  --}}
+                <div class="d-flex" >
+                    <div style="cursor:pointer"  class="card border-left-primary shadow h-20 mx-3" v-for="collection in collectionList" @click="getModelSchema(collection)">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 text-uppercase">@{{collection}}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>              
+                    </div>              
+                </div>
             </div>
 
             <br/>
 
-            <div style="cursor:pointer"  class="card border-left-success shadow h-20 mx-3 w-50" v-for="collection in collectionList" @click="getModelSchema(collection)">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-capitalize text-center">+ create</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary mx-3" data-toggle="modal" data-target="#createCollectionModal">
+                Create
+            </button>
         </div>
          {{--  Selected Schema  --}}
         <div class="col-lg-8">
@@ -38,9 +36,9 @@
                 Schema 
             </div>
 
-            <div class="card shadow mb-4">
+            <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary d-flex justify-content-between">@{{selectedCollection.name}}  <span class="text-muted" >@{{Object.keys(selectedCollection).length}} fields </span> </h6>
+                    <h6 class="m-0 font-weight-bold text-primary d-flex justify-content-between">@{{selectedCollection.name}}  <span class="text-muted" >@{{Object.keys(selectedCollection.schema).length}} fields </span> </h6>
                 </div>
                 <div class="card-body">
                     <div class="row my-4"  v-for="(value,name) in selectedCollection.schema" >
@@ -59,7 +57,7 @@
                           </div>
                     </div>
                     <div class="row mt-2 float-right">
-                          <button class="btn btn-outline-primary font-weight-bold text-uppercase">
+                          <button class="btn btn-outline-primary font-weight-bold text-uppercase" data-toggle="modal" data-target="#createCollectionTypeModal">
                               + add another field to this collection type
                           </button>
                     </div>
@@ -67,11 +65,80 @@
             </div>
         </div>
     </div>
+    <hr/>     
 
-    <hr/>
+    
+    <!-- Create Collection Modal -->
+    <div class="modal fade" id="createCollectionModal" tabindex="-1" role="dialog" aria-labelledby="createCollectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="createCollectionModalLabel">Create New Collection</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <h5 class="text-gray-900">Configurations</h5>
+                <div class="form-group">
+                    <b>Name</b>
+                    <input type="text" class="form-control" placeholder="User" v-model="newCollectionName" />
+                </div>
+                <div class="form-group">
+                    <b>Description</b>
+                    <textarea type="text" class="form-control" rows="4"></textarea>
+                </div>
+            
+            </div>
+            <div class="modal-footer w-100 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="createNewCollection" >Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
 
-     
+    <!-- Create Collection Type Modal -->
+    <div class="modal fade" id="createCollectionTypeModal" tabindex="-1" role="dialog" aria-labelledby="createCollectionTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="createCollectionTypeModalLabel">@{{selectedCollection.name}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" placeholder="email" v-model="newCollectionType.name"/>
+                            </div>
+                        </div>   
+                        <div class="col-6">
+                            <label>Select a field for your collection type</label>
+                            <select class="form-control" v-model="newCollectionType.type" >
+                              <option>String</option>
+                              <option>Number</option>
+                              <option>Boolean</option>
+                            </select>
+                        </div>
+                                  
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer w-100 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="createNewCollectionType" >Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
 </div>
+
+
 
 <script type="text/javascript">
    Vue.component("schema-type",{
@@ -106,6 +173,11 @@
                 name:"",
                 schema:{}
             },
+            newCollectionName:"",
+            newCollectionType:{
+                type:undefined,
+                name:""
+            },
             editMode:false,
         },
         created: function () {
@@ -139,6 +211,18 @@
                     }
                 })
                 .catch(error => console.log('error', error));
+            },
+            createNewCollection(){
+                this.collectionList.push({
+                    name:this.newCollectionName,
+                    schema:{}
+                })
+                this.selectedCollection = this.collectionList.pop();
+                $('#createCollectionModal').modal('hide')
+            },
+            createNewCollectionType(){
+                const newCollectionData = {}
+                // Vue.set(this.selectedCollection,this.newCollectionType.name,{type:this.newCollectionType.type})
             }
         }
     })
