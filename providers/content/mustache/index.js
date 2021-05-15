@@ -6,7 +6,7 @@ module.exports = (template) => {
     path.join(
       appRoot.path,
       "providers",
-      "4_content",
+      "content",
       "mustache",
       "templates",
       `${template}.mustache`

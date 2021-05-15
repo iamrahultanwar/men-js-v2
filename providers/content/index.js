@@ -43,4 +43,13 @@ module.exports = function (ctx) {
       return res.send({ message: "Not Found" });
     }
   });
+
+  Server.delete("/content/delete/:model", (req, res) => {
+    const { model } = req.params;
+    Locations.get("controllers").delete(model.toString().toLowerCase());
+    Locations.get("mappings").delete(model);
+    Locations.get("models").delete(model);
+
+    return res.send("Removed");
+  });
 };

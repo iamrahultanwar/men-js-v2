@@ -1,5 +1,37 @@
+const AdminBro = require("admin-bro");
+const AdminBroExpress = require("@admin-bro/express");
+const AdminBroMongoose = require("@admin-bro/mongoose");
+AdminBro.registerAdapter(AdminBroMongoose);
+
+const path = require("path");
+
 module.exports = (ctx) => {
-  const { View, Server } = ctx.container;
+  const { View, Server, Models, Database } = ctx.container;
+
+  const resources = Array.from(Models.keys()).map((modelKey) =>
+    Models.get(modelKey)
+  );
+
+  const adminBro = new AdminBro({
+    resources: resources,
+    rootPath: "/admin-bro",
+    dashboard: {
+      handler: async () => {
+        return { some: "output" };
+      },
+      component: AdminBro.bundle(path.join(__dirname, "dashboard.jsx")),
+    },
+    sidebar: {
+      handler: async () => {
+        return { some: "output" };
+      },
+      component: AdminBro.bundle(path.join(__dirname, "dashboard.jsx")),
+    },
+  });
+
+  const router = AdminBroExpress.buildRouter(adminBro);
+
+  Server.use(adminBro.options.rootPath, router);
 
   Server.get("/admin", async (req, res) => {
     const html = await View.render("pages/home");

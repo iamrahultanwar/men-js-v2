@@ -52,7 +52,7 @@ module.exports = (ctx) => {
     }
   };
 
-  const query = async (req, res) => {
+   const query = async (req, res) => {
     const query = req.body;
     try {
       const user = await User.find()
