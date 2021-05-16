@@ -1,1 +1,1 @@
-{"email":{"type":"String"},"age":{"type":"Number"},"todos":{"type":"ref","ref":"Todo","relationship":"hasMany"}}
+{"email":{"type":"String"},"age":{"type":"Number"}}
