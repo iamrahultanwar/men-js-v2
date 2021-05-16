@@ -54,7 +54,12 @@
                             @{{name}}    
                           </div> 
                           <div class="col-4 text-center">
-                              @{{value.type}}
+                            <span v-if="value.relationship">
+                                @{{value.relationship}} - @{{value.ref}}
+                            </span> 
+                            <span v-else>                           
+                                @{{value.type}}
+                            </span> 
                           </div>
                           <div class="col-4 text-right">
                             <i class="fas fa-pencil-alt" style="cursor:pointer" @click="editCollectionType(name,value.type)"></i>
@@ -277,7 +282,7 @@
              createNewCollectionType(){
                  this.editMode = true;
                  if(this.newCollectionType.relationship){
-                     let type = {type:"ref",ref:this.newCollectionType.ref,relationship:this.newCollectionType.relationship}
+                     let type = {type:"Ref",ref:this.newCollectionType.ref,relationship:this.newCollectionType.relationship}
                      Vue.set(this.selectedCollection.schema,this.newCollectionType.name,type)
                  }else{     
                      Vue.set(this.selectedCollection.schema,this.newCollectionType.name,{type:this.newCollectionType.type})
@@ -306,7 +311,7 @@
                  .then(response => response.json())
                  .then(result => {
                      this.editMode = false
-                     this.saveLoading = true
+                     this.saveLoading = false
                  })
                  .catch(error => console.log('error', error));
              },
