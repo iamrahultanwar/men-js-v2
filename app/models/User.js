@@ -5,14 +5,6 @@ module.exports = (schema) => {
     next();
   });
 
-  // `true` means this is a parallel middleware. You **must** specify `true`
-  // as the second parameter if you want to use parallel middleware.
-  schema.pre("save", true, function (next, done) {
-    // calling next kicks off the next middleware in parallel
-    next();
-    setTimeout(done, 100);
-  });
-
   schema.post("init", function (doc) {
     console.log("%s has been initialized from the db", doc._id);
   });
@@ -25,5 +17,11 @@ module.exports = (schema) => {
   schema.post("remove", function (doc) {
     console.log("%s has been removed", doc._id);
   });
+
+  // Always attach `populate()` to `find()` calls
+  schema.pre("find", function () {
+    this.populate("todos");
+  });
+
   return schema;
 };

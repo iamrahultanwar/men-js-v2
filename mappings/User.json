@@ -1,6 +1,1 @@
-{
-  "name": { "type": "String", "required": false },
-  "email": { "type": "String", "required": true },
-  "password": { "type": "String", "required": true },
-  "role": { "type": "String", "uppercase": true, "default": "ADMIN" }
-}
+{"name":{"type":"String"},"age":{"type":"Number"},"todos":{"type":"Ref","ref":"Todo","relationship":"hasMany"}}

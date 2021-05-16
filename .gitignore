@@ -2,4 +2,15 @@ node_modules
 
 
 # react build
-./public
+./public 
+
+
+# admin bro
+.adminbro 
+
+
+# Menjs
+
+app/controllers
+app/models
+mappings

@@ -1,131 +1,335 @@
 <div id="app">
     {{--  Collections List  --}}
     <div class="row">
-        <div class="col-md-4 col-lg-4">
-            <!-- Heading -->
-            <div class="text-uppercase mb-4 d-flex justify-content-between" style="padding:0 1rem;font-weight:800;font-size: .8rem">
-                <span>Collections</span>   
-                <button class="btn btn-outline-primary">Create</button>
-            </div>
+        <div class="col-md-4 col-lg-4 d-flex flex-column justify-content-between">
+           
 
-            {{--  List  --}}
-            <div class="d-flex" >
-                <div style="cursor:pointer"  class="card border-left-primary shadow h-20 mx-3" v-for="collection in collectionList" @click="getModelSchema(collection)">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="h5 mb-0 font-weight-bold text-gray-800 text-uppercase">@{{collection}}</div>
+            <div>
+                 <!-- Heading -->
+                <div class="text-uppercase mb-4 d-flex justify-content-between" style="padding:0 1rem;font-weight:800;font-size: .8rem">
+                    <span>Collections</span>   
+                </div>
+                 {{--  List  --}}
+                <div class="d-flex flex-column" >
+                    <div class="card border-left-primary shadow h-20 m-1" v-for="collection in collectionList" >
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-10"  style="cursor:pointer" @click="getModelSchema(collection)">
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 text-uppercase">@{{collection}}</div>
+                                </div>
+                                <div class="col-2 text-right">
+                                    <button class="btn btn-sm btn-danger" @click="deleteCollection(collection)">Delete</button>
+                                </div>
                             </div>
                         </div>
+                    </div>         
+                    <div v-if="collectionList.length===0"  >
+                        <span class="m-3 text-muted" style="font-weight:700;font-size: .8rem">No collection found</span>
                     </div>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary m-3" data-toggle="modal" data-target="#createCollectionModal">
+                        Create
+                    </button>    
                 </div>
             </div>
+            
+            <br/>
+            
         </div>
          {{--  Selected Schema  --}}
-        <div class="col-lg-8">
+        <div class="col-lg-8" v-if="collectionList.length > 0" >
             <div class="text-uppercase mb-4" style="padding:0 1rem;font-weight:800;font-size: .8rem">
                 Schema 
             </div>
 
-            <div class="card shadow mb-4">
+            <div  class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary d-flex justify-content-between">@{{selectedCollection.name}}  <span class="text-muted" >@{{Object.keys(selectedCollection).length}} fields </span> </h6>
+                    <h6 class="m-0 font-weight-bold text-primary d-flex justify-content-between">@{{selectedCollection.name}}  <span class="text-muted" >@{{Object.keys(selectedCollection.schema).length}} fields </span> </h6>
                 </div>
                 <div class="card-body">
-                    <div class="row"  v-for="(value,name) in selectedCollection.schema" >
+                    <div class="row my-4"  v-for="(value,name) in selectedCollection.schema" >
                           <div class="col-4 text-left">  
+                           <schema-type :type="value.type"></schema-type>
+                            <span class="mx-2"></span> 
                             @{{name}}    
                           </div> 
                           <div class="col-4 text-center">
-                              @{{value.type}}
+                            <span v-if="value.relationship">
+                                @{{value.relationship}} - @{{value.ref}}
+                            </span> 
+                            <span v-else>                           
+                                @{{value.type}}
+                            </span> 
                           </div>
                           <div class="col-4 text-right">
-                            <i class="fas fa-pencil-alt"></i>
-                            <i class="fas fa-trash-alt"></i>
+                            <i class="fas fa-pencil-alt" style="cursor:pointer" @click="editCollectionType(name,value.type)"></i>
+                            <span class="mx-2" ></span>
+                            <i class="fas fa-trash-alt"  style="cursor:pointer" @click="deleteCollectionType(name)"></i>
                           </div>
+                    </div>
+                    <hr v-if="Object.keys(selectedCollection.schema).length > 0"/>
+                    <div class="row mt-2 mx-auto d-flex justify-content-between">
+                        <button class="btn btn-outline-primary font-weight-bold text-uppercase" data-toggle="modal" data-target="#createCollectionTypeModal">
+                            + add another field to this collection type
+                        </button>
+                        <button v-if="editMode" class="btn btn-outline-success font-weight-bold text-uppercase d-flex justify-content-between align-items-center" @click="mutateCollection"  :disabled="saveLoading">
+                            <spinner-grow v-if="saveLoading" type="success"></spinner-grow> <span v-else>Save</span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+  
 
-    <hr/>
+    
+    <!-- Create Collection Modal -->
+    <div class="modal fade" id="createCollectionModal" tabindex="-1" role="dialog" aria-labelledby="createCollectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="createCollectionModalLabel">Create New Collection</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <b>Collection Name</b>
+                    <input type="text" class="form-control mt-2" placeholder="User" v-model="newCollectionName" />
+                </div>
+            </div>
+            <div class="modal-footer w-100 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="createNewCollection" >Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
 
-     
+    <!-- Create Collection Type Modal -->
+    <div class="modal fade" id="createCollectionTypeModal" tabindex="-1" role="dialog" aria-labelledby="createCollectionTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="createCollectionTypeModalLabel">@{{selectedCollection.name}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" placeholder="email" v-model="newCollectionType.name"/>
+                            </div>
+                        </div>   
+                        <div class="col-6">
+                            <label>Select a field for your collection type</label>
+                            <select class="form-control" v-model="newCollectionType.type" >
+                              <option>String</option>
+                              <option>Number</option>
+                              <option>Boolean</option>
+                              <option>Ref</option>
+                            </select>
+                        </div>
+                                  
+                    </div>
+                    <div class="row" v-if="newCollectionType.type=== 'Ref'">
+                        <div class="col-6">
+                            <label>Select relationship</label>
+                            <div>
+                                <span class="badge pointer" :class="{'badge-success': newCollectionType.relationship === 'hasOne'}" @click="newCollectionType.relationship='hasOne'">Has one</span>
+                                <span class="badge pointer" :class="{'badge-success': newCollectionType.relationship === 'hasMany'}" @click="newCollectionType.relationship='hasMany'">Has many</span>
+                            </div>
+
+                        </div>
+                        <div class="col-6">
+                            <label>Select collection</label>
+                            <select class="form-control" v-model="newCollectionType.ref" >
+                              <option v-for="collection in collectionList">@{{collection}}</option>             
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer w-100 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="createNewCollectionType" >Add Type</button>
+            </div>
+        </div>
+        </div>
+    </div>
 </div>
 
+
+@section('script')
 <script type="text/javascript">
-   const App =  new Vue({
-        el:'#app',
-        data:{
-            collectionList:[],
-            selectedCollection:{
-                name:"",
-                schema:{}
-            },
-            editMode:false,
-            schemaOptions:{
-                name:    "String",
-            }
-        },
-        created: function () {
-           this.getCollectionList()
-        },
-        methods : {
-            async getCollectionList(){
-                var requestOptions = {
-                    method: 'GET',                
-                };
-                fetch("http://localhost:1708/content/list", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    this.collectionList = result
-                    this.getModelSchema(result[0])
-                })
-                .catch(error => console.log('error', error));
-            },
-
-            async getModelSchema(model){
-                var requestOptions = {
-                    method: 'GET',
-                };
-                fetch("http://localhost:1708/content/"+model, requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    this.selectedCollection = {
-                        name:model,
-                        schema:result
-                    }
-                })
-                .catch(error => console.log('error', error));
-            }
-        }
+    Vue.component("schema-type",{
+        props:["type"],
+        computed:{
+             typeClass(){
+                 const type = this.type.toLowerCase();         
+                 switch(type){
+                     case "string": return "badge-success";
+                     case "number": return "badge-primary";
+                     case "boolean": return "badge-warning";
+                     case "ref": return "badge-info";
+                     default: return "badge-secondary"
+                 }
+             },
+             typeText(){
+                 const type = this.type.toLowerCase();         
+                 switch(type){
+                     case "string": return "Abc";
+                     case "number": return "123";
+                     case "boolean": return "true";
+                     case "ref": return "Ref";
+                     default: return "na"
+                 }
+             }
+         },
+        template:"<span :class=\"['badge', typeClass,'p-2','px-3']\" >@{{typeText}}</span>"
+    }) 
+ 
+    Vue.component("spinner-grow",{
+        props:["type"],
+        template:"<div class=\"spinner-grow text-@{{type}} spinner-grow-sm\" role=\"status\"><span class=\"sr-only\">Loading...</span></div>"
     })
-</script>
+ 
+    const App =  new Vue({
+         el:'#app',
+         data:{
+             collectionList:[],
+             selectedCollection:{
+                 name:"",
+                 schema:{}
+             },
+             newCollectionName:"",
+             newCollectionType:{
+                 type:"String",
+                 name:"",
+                 relationship:undefined,
+                 ref:undefined
+             },
+             editMode:false,
+             saveLoading:false
+         },
+         created: function () {
+            this.getCollectionList()
+         },
+         
+         methods : {
+             async getCollectionList(){
+                 var requestOptions = {
+                     method: 'GET',                
+                 };
+                 fetch("http://localhost:1708/content/list", requestOptions)
+                 .then(response => response.json())
+                 .then(result => {
+                     this.collectionList = result
+                     if(this.selectedCollection.name.length === 0 && result.length > 0) this.getModelSchema(result[0])
+                 })
+                 .catch(error => console.log('error', error));
+             },
+ 
+             async getModelSchema(model){
+                 if(model){
+                     var requestOptions = {
+                         method: 'GET',
+                     };
+                     fetch("http://localhost:1708/content/"+model, requestOptions)
+                     .then(response => response.json())
+                     .then(result => {
+                         this.selectedCollection = {
+                             name:model,
+                             schema:result
+                         }
+                     })
+                     .catch(error => console.log('error', error));
+                 }
+                
+             },
+             createNewCollection(){
+                 this.collectionList.push(this.newCollectionName)
+ 
+                 this.selectedCollection = {
+                     name:this.newCollectionName,
+                     schema:{}
+                 };
+                 console.log(this.collectionList)
+                 $('#createCollectionModal').modal('hide')
+                 $('#createCollectionTypeModal').modal('show')
+ 
+             },
+             deleteCollection(collection){
+                 var requestOptions = {
+                     method: 'DELETE',
+                 };
+                 fetch("http://localhost:1708/content/delete/"+collection, requestOptions)
+                 .then(response => response.text())
+                 .then(result => {
+                     this.selectedCollection = {
+                         name:"",
+                         schema:{}
+                     }
+                     this.getCollectionList()
+                 })
+                 .catch(error => console.log('error', error));
+             },
+             createNewCollectionType(){
+                 this.editMode = true;
+                 if(this.newCollectionType.relationship){
+                     let type = {type:"Ref",ref:this.newCollectionType.ref,relationship:this.newCollectionType.relationship}
+                     Vue.set(this.selectedCollection.schema,this.newCollectionType.name,type)
+                 }else{     
+                     Vue.set(this.selectedCollection.schema,this.newCollectionType.name,{type:this.newCollectionType.type})
+                 }
+                 this.newCollectionType.name = ""
+                 this.newCollectionType.type = "String"
+             },
+             mutateCollection(){
+                 this.saveLoading = true
+                 var myHeaders = new Headers();
+                 myHeaders.append("Content-Type", "application/json");
+                 myHeaders.append("Cookie", "i18n_redirected=en");
+ 
+                 var raw = JSON.stringify({
+                     "schema": this.selectedCollection.schema,
+                 });
+ 
+                 var requestOptions = {
+                     method: 'POST',
+                     headers: myHeaders,
+                     body: raw,
+                     redirect: 'follow'
+                 };
+ 
+                 fetch("http://localhost:1708/content/create/"+this.selectedCollection.name, requestOptions)
+                 .then(response => response.json())
+                 .then(result => {
+                     this.editMode = false
+                     this.saveLoading = false
+                 })
+                 .catch(error => console.log('error', error));
+             },
+             editCollectionType(name,type){    
+                 this.newCollectionType = {type,name}
+                 $('#createCollectionTypeModal').modal('show')
+                 this.editMode = true;
+             },
+             deleteCollectionType(name){
+                 Vue.delete(this.selectedCollection.schema,name)
+                 this.editMode = true;
+             }
+ 
+         }
+     })
+ </script> 
+@end
 
-{{--  <script>
 
-    const getCollectionList = async ()=>{
-        var myHeaders = new Headers();
-        myHeaders.append("Cookie", "i18n_redirected=en");
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-        fetch("http://localhost:1708/content/list", requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            const ul = document.getElementById("collectionUL");          
-            result.forEach((r)=>{
-                const li = document.createElement("li");
-                li.appendChild(document.createTextNode(r));
-                ul.appendChild(li);
-            })
-        })
-        .catch(error => console.log('error', error));
-   }
 
-   getCollectionList()
-</script>  --}}
 

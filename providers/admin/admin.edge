@@ -1,1 +1,14 @@
-<h1>Admin</h1>
+<div style="height: 120vh">
+    <iframe src="http://localhost:1708/admin-bro/" height="100%" width="100%" frameBorder="0" onload="onLoadHandler();" id="adminBroFrame" style="display: none"></iframe>
+</div>
+
+<script>
+    function onLoadHandler() {
+        const iframe = document.getElementById("adminBroFrame")
+        const sections = iframe.contentWindow.document.getElementsByTagName("section")
+        sections[1].remove()
+        sections[2].remove()
+        sections[3].style = "padding:0px"
+        iframe.style = "display: block"
+    }
+</script>
