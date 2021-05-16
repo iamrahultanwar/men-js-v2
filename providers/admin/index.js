@@ -6,8 +6,8 @@ AdminBro.registerAdapter(AdminBroMongoose);
 const path = require("path");
 
 module.exports = (ctx) => {
-  const { View, Server, Models, Database } = ctx.container;
-
+  const { View, Server, Models } = ctx.container;
+  const models = Array.from(Models.keys());
   const resources = Array.from(Models.keys()).map((modelKey) =>
     Models.get(modelKey)
   );
@@ -17,7 +17,7 @@ module.exports = (ctx) => {
     rootPath: "/admin-bro",
     dashboard: {
       handler: async () => {
-        return { some: "output" };
+        return { models };
       },
       component: AdminBro.bundle(path.join(__dirname, "dashboard.jsx")),
     },

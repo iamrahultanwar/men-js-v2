@@ -206,7 +206,7 @@
              newCollectionType:{
                  type:"String",
                  name:"",
-                 relationship:"hasOne",
+                 relationship:undefined,
                  ref:undefined
              },
              editMode:false,
@@ -277,8 +277,7 @@
              createNewCollectionType(){
                  this.editMode = true;
                  if(this.newCollectionType.relationship){
-                     let type = {type:"ref",ref:this.newCollectionType.ref}
-                     type = this.newCollectionType.relationship === "hasOne" ? type : [type]
+                     let type = {type:"ref",ref:this.newCollectionType.ref,relationship:this.newCollectionType.relationship}
                      Vue.set(this.selectedCollection.schema,this.newCollectionType.name,type)
                  }else{     
                      Vue.set(this.selectedCollection.schema,this.newCollectionType.name,{type:this.newCollectionType.type})
