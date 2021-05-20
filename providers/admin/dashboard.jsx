@@ -17,17 +17,21 @@ const Dashboard = () => {
   return (
     <Box variant="grey">
       <Box variant="white">
-        {models.map((model, index) => (
-          <Link
-            key={index}
-            to={`/admin-bro/resources/${model}`}
-            style={{ textDecoration: "none", margin: "3px" }}
-          >
-            <Badge variant="primary" size="lg">
-              {model}
-            </Badge>
-          </Link>
-        ))}
+        {models.length > 0 ? (
+          models.map((model, index) => (
+            <Link
+              key={index}
+              to={`/admin-bro/resources/${model}`}
+              style={{ textDecoration: "none", margin: "3px" }}
+            >
+              <Badge variant="primary" size="lg">
+                {model}
+              </Badge>
+            </Link>
+          ))
+        ) : (
+          <h1>No Collection Found</h1>
+        )}
       </Box>
     </Box>
   );

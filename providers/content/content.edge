@@ -344,7 +344,7 @@
                  .then(response => response.json())
                  .then(result => {
                      this.editMode = false
-                     this.saveLoading = true
+                     this.saveLoading = false
                  })
                  .catch(error => console.log('error', error));
              },
