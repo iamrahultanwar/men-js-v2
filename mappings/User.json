@@ -1,1 +1,6 @@
-{"email":{"type":"String"},"age":{"type":"Number"}}
+{
+  "email": { "type": "String" },
+  "age": { "type": "Number" },
+  "type": { "type": "String", "enum": ["student", "teacher", "pricipal"] },
+  "user": { "type": "ref", "ref": "User", "relationship": "hasOne" }
+}
